@@ -14,7 +14,9 @@
   Ship.RADIUS = 10;
 
   Ship.prototype.power = function (impulse) {
-    this.vel += impulse;
+    if (this.vel < 2) {
+      this.vel += impulse;
+    }
   };
 
   Ship.prototype.changeDirection = function () {
@@ -37,5 +39,30 @@
 
     this.pos[0] += xOffset;
     this.pos[1] += yOffset;
+  };
+
+  Ship.prototype.fireBullet = function () {
+    if (this.vel > 0) {
+      var x = this.pos[0];
+      var y = this.pos[1];
+      var normalizedVel;
+
+      if(this.vel[0] < 1) {
+        normalizedVel = 1;
+      } else {
+        normalizedVel = this.vel;
+      }
+
+      var shipX = normalizedVel * Math.sin(this.dir);
+      var shipY = normalizedVel * Math.cos(this.dir);
+
+      var xMag = Math.pow(shipX, 2);
+      var yMag = Math.pow(shipY, 2);
+      var shipMag = Math.sqrt(xMag + yMag);
+      var bulletVelocity = [ (shipX / shipMag) * 15, (shipY / shipMag) * 15];
+
+      var bullet = new Asteroids.Bullet([x, y], bulletVelocity);
+      return bullet;
+    }
   };
 })(this);

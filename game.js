@@ -5,6 +5,7 @@
     this.ctx = ctx;
     this.asteroids = this.addAsteroids(20);
     this.ship = new Asteroids.Ship(Game.CENTER_POS);
+    this.bullets = [];
   };
 
   Game.DIM_X = window.innerWidth;
@@ -35,12 +36,20 @@
       asteroid.draw(game.ctx);
     });
 
+    game.bullets.forEach(function (bullet) {
+      bullet.draw(game.ctx);
+    });
+
     game.ship.draw(game.ctx);
   };
 
   Game.prototype.move = function () {
     this.asteroids.forEach(function (asteroid) {
       asteroid.move();
+    });
+
+    this.bullets.forEach(function (bullet) {
+      bullet.move();
     });
 
     this.ship.move();
@@ -55,10 +64,24 @@
   };
 
   Game.prototype.step = function () {
+    var game = this;
+
     this.move();
     this.checkForWrap();
     this.draw();
-    // this.checkCollisions();
+    this.checkCollisions();
+
+    if (key.isPressed(38)) {
+      game.ship.power(0.1);
+    }
+
+    if (key.isPressed(37)) {
+      game.ship.dir += 0.015;
+    }
+
+    if (key.isPressed(39)) {
+      game.ship.dir -= 0.015;
+    }
   };
 
   Game.prototype.checkCollisions = function () {
@@ -69,6 +92,15 @@
         alert('Game over!');
       }
     });
+
+    game.bullets.forEach(function (bullet) {
+      bullet.hitAsteroids(game);
+    });
+  };
+
+  Game.prototype.fireBullet = function () {
+    var bullet = this.ship.fireBullet();
+    if (bullet) this.bullets.push(bullet);
   };
 
   Game.prototype.stop = function () {
@@ -77,35 +109,15 @@
 
   Game.prototype.start = function () {
     var game = this;
-    game.bindKeyHandlers();
+
+    $(document).ready(function () {
+      $(document).on('keyup', function (e) {
+        if (e.keyCode === 32) game.fireBullet();
+      });
+    });
 
     game.interval = setInterval(function () {
       game.step();
     }, game.FPS);
-  };
-
-  Game.prototype.bindKeyHandlers = function () {
-    var game = this;
-
-    key('left', function () {
-      game.ship.dir += 0.1;
-    });
-
-    key('up', function () {
-      if (game.ship.vel < 2) {
-        game.ship.power(0.2);
-      }
-    });
-
-    key('right', function () {
-      // change dir
-      game.ship.dir -= 0.1;
-    });
-
-    key('down', function () {
-      if (game.ship.vel > -2) {
-        game.ship.power(-0.1);
-      }
-    });
   };
 })(this);
