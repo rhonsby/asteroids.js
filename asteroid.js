@@ -16,7 +16,7 @@
   Asteroids.inherits(Asteroids.MovingObject, Asteroid);
 
   Asteroid.COLOR = 'white';
-  Asteroid.RADIUS = 25;
+  Asteroid.RADIUS = 35;
 
   Asteroid.randomAsteroid = function (dimX, dimY) {
     var x = Math.floor(Math.random() * (dimX + 1));
@@ -29,6 +29,22 @@
     var x = Math.random() * (1 - 1 + 0.5) - 1 * (Math.random() * 2 - 0.5);
     var y = Math.random() * (1 - 1 + 0.5) - 1 * (Math.random() * 2 - 0.5);
     return [x, y];
+  };
+
+  Asteroid.prototype.draw = function (ctx) {
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+
+    ctx.arc(
+      this.pos[0],
+      this.pos[1],
+      this.radius,
+      0,
+      2 * Math.PI,
+      false
+    );
+
+    ctx.fill();
   };
 
 })(this);
