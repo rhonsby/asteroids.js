@@ -8,6 +8,18 @@
     this.color = color;
   };
 
+  MovingObject.prototype.checkForWrap = function(DIM_X, DIM_Y) {
+    if (this.pos[0] > DIM_X + this.radius) {
+      this.pos[0] = 0 - this.radius;
+    } else if (this.pos[0] < 0 - this.radius) {
+      this.pos[0] = DIM_X + this.radius;
+    } else if (this.pos[1] > DIM_Y + this.radius) {
+      this.pos[1] = 0 - this.radius;
+    } else if (this.pos[1] < 0 - this.radius) {
+      this.pos[1] = DIM_Y + this.radius;
+    }
+  };
+
   MovingObject.prototype.move = function () {
     this.pos[0] += this.vel[0];
     this.pos[1] += this.vel[1];
